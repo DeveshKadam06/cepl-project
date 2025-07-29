@@ -1,3 +1,77 @@
-<h1>About Us</h1>
-<p>We are dedicated to providing the best wellness solutions to your needs.</p>
-<p>We group of 3 friends have made this website to help you achieve your wellness goals.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - JeevaWell</title>
+  <style>
+    body {
+      background-color: light orange; /* light orange */
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #2e8b57;
+      text-align: center;
+      font-size: 2.5em;
+      margin-top: 60px;
+      animation: slideFromTop 1.2s ease-out forwards;
+      opacity: 0;
+    }
+
+    p {
+      max-width: 800px;
+      margin: 40px auto;
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: center;
+      animation: slideFromBottom 1.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    /* Keyframe Animations */
+    @keyframes slideFromTop {
+      from {
+        transform: translateY(-60px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideFromBottom {
+      from {
+        transform: translateY(60px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      p {
+        font-size: 16px;
+        margin: 30px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>About Us</h1>
+  <p>Welcome to JeevaWell. We are dedicated to promoting health and wellness through yoga, medicine, and smart diets.</p>
+  <p>We are group of 3 friends are here to help in your medical proglems</p>
+  
+</body>
+</html>

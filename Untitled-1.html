@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jeevawell - Healthcare</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f7fafc;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: #2e86de;
+            color: #fff;
+            padding: 2rem 1rem 1rem 1rem;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #eaf6fb;
+        }
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            background: #eaf6fb;
+            padding: 1rem 0;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer-nav button {
+            background: #2e86de;
+            color: #fff;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .footer-nav button:hover {
+            background: #1456a0;
+        }
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            main {
+                padding: 1rem 0.5rem;
+            }
+            .footer-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .footer-nav button {
+                width: 90%;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Jeevawell!</h1>
+        <div class="subtitle">Your Health, Our Priority</div>
+    </header>
+    <main>
+        <p>
+            At Jeevawell, we are committed to providing quality healthcare services tailored to your needs. Our experienced team ensures you receive the best care in a compassionate environment.
+        </p>
+    </main>
+    <nav class="footer-nav">
+        <button onclick="showAboutUs()">About Us</button>
+        <button onclick="window.location.href='#services'">Our Services</button>
+        <button onclick="window.location.href='#contact'">Contact Us</button>
+    </nav>
+</body>
+</html>

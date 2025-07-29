@@ -1,9 +1,111 @@
-<h1>Our Services</h1>
-<p>We offer a variety of wellness services to help you:</p>
-<ul>
-    <li>Diets and exercises</li>
-    <li>Allopathy, homeopathy, Ayurveda</li>
-    <li>Stress management techniques</li>
-    <li>Yoga and meditation</li>
-    <li>Suggestions for medicine</li>
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Our Services - JeevaWell</title>
+    <style>
+        body {
+            background-color: #fff8f0;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            animation: fadeIn 1.2s ease-in;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #2e8b57;
+            text-align: center;
+            font-size: 2.5em;
+            animation: zoomIn 1s ease-out;
+        }
+
+        ul {
+            max-width: 700px;
+            margin: 30px auto;
+            font-size: 18px;
+            list-style-type: square;
+            animation: fadeUp 1.5s ease;
+        }
+
+        ul li {
+            margin-bottom: 12px;
+        }
+
+        p {
+            max-width: 700px;
+            margin: 0 auto 16px auto;
+            font-size: 1.1em;
+        }
+
+        .exit-btn-container {
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 20px;
+        }
+
+        .exit-btn {
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 38px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(240,152,25,0.08);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .exit-btn:hover, .exit-btn:focus {
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+            transform: translateY(-2px) scale(1.04);
+            outline: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            .exit-btn {
+                width: 90%;
+                padding: 12px 0;
+                font-size: 1em;
+            }
+            p {
+                font-size: 1em;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Our Services</h1>
+    <p>We offer BMI (Body Mass Indx) assessments to help you understand your weight in relation to your height.</p>
+    <p>We provide personalized diet plans tailored to your health needs and lifestyle.</p>
+    <p>We provide information in different languages to cater to our diverse clientele.</p>
+    <p>We provide solutions in Allopathy as well as Ayurveda</p>
+    <div class="exit-btn-container">
+        <button class="exit-btn" onclick="window.close();">Exit</button>
+    </div>
+</body>
+</html>
