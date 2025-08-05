@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JeevaWell</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fff9e6;
+      color: #2f2f2f;
+      transition: all 0.4s ease;
+    }
+
+    .section {
+      display: none;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #2e8b57;
+    }
+
+    input, select, button {
+      padding: 12px;
+      margin: 10px 0;
+      width: 90%;
+      max-width: 400px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #fff4cc;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-title img {
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .lang-switch button {
+      font-size: 0.8em;
+      margin-left: 5px;
+      background-color: transparent;
+      color: #2e8b57;
+      border: 1px solid #2e8b57;
+    }
+
+    .img-main {
+      width: 500px;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      margin: 20px auto;
+      display: block;
+    }
+
+    nav {
+      background-color: #fff4cc;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: space-around;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav ul li a {
+      padding: 15px 0;
+      font-weight: bold;
+      text-decoration: none;
+      color: #333;
+    }
+
+    #profileInfo {
+      display: none;
+      align-items: center;
+      cursor: default;
+    }
+
+    .profile-circle {
+      background-color: #ddd;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .img-main { width: 90%; }
+      h1 { font-size: 2em; }
+    }
+  </style>
+</head>
+<body>
+<!-- Top Bar -->
+<div class="topbar" style="width:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:relative;">
+    <!-- Logo and Title (left, but shifted towards center) -->
+    <div class="logo-title" style="display:flex; align-items:center; flex:1; justify-content:flex-start; min-width:300px;">
+        <img src="photo1 copy 2.png" alt="Logo" style="height:70px; width:auto; margin-right:18px;" />
+        <strong style="color:#2e8b57; font-size:2em; letter-spacing:1px;">JeevaWell</strong>
+    </div>
+    <!-- Spacer to push right content to far right -->
+    <div style="flex:2;"></div>
+    <!-- Right Side: Profile + Language -->
+    <div style="display:flex; align-items:center; gap:18px;">
+        <!-- Profile Circle -->
+        <div id="profileInfo" style="display:flex; align-items:center; cursor:pointer;" onclick="toggleProfileDetails()">
+            <div class="profile-circle" id="profileCircle" style="width:45px; height:45px; font-size:1.3em;">U</div>
+        </div>
+        <!-- Language Dropdown -->
+        <div class="lang-switch" style="position:relative;">
+            <button id="langDropdownBtn" onclick="toggleLangDropdown()" style="font-size:1em; background:transparent; color:#2e8b57; border:1.5px solid #2e8b57; border-radius:7px; padding:7px 18px 7px 12px; min-width:90px; display:flex; align-items:center; gap:7px;">
+                <span id="currentLangLabel">English</span>
+                <span style="font-size:1.2em;">&#9662;</span>
+            </button>
+            <div id="langDropdown" style="display:none; position:absolute; right:0; top:110%; background:#fff; border:1px solid #2e8b57; border-radius:8px; min-width:120px; box-shadow:0 2px 8px rgba(46,139,87,0.07); z-index:100;">
+                <div onclick="setLanguage('en'); setLangLabel('English'); toggleLangDropdown();" style="padding:10px 16px; cursor:pointer;">English</div>
+                <div onclick="setLanguage('hi'); setLangLabel('हिन्दी'); toggleLangDropdown();" style="padding:10px 16px; cursor:pointer;">हिन्दी</div>
+                <div onclick="setLanguage('mr'); setLangLabel('मराठी'); toggleLangDropdown();" style="padding:10px 16px; cursor:pointer;">मराठी</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Profile Details Popup -->
+<div id="profileDetailsPopup" style="display:none; position:absolute; top:70px; right:140px; background:#fff; border:1px solid #2e8b57; border-radius:10px; box-shadow:0 2px 8px rgba(46,139,87,0.10); padding:18px 24px; min-width:220px; z-index:200;">
+    <div style="font-weight:bold; color:#2e8b57; font-size:1.1em; margin-bottom:8px;">User Info</div>
+    <div id="profileName"></div>
+    <div id="profileEmail"></div>
+    <div id="profileAge"></div>
+    <div id="profileOcc"></div>
+    <button onclick="closeProfileDetails()" style="margin-top:12px; background:#2e8b57; color:#fff; border:none; border-radius:6px; padding:6px 18px; cursor:pointer;">Close</button>
+</div>
+<script>
+    // Language dropdown logic
+    function toggleLangDropdown() {
+        var dd = document.getElementById('langDropdown');
+        dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+    }
+    function setLangLabel(label) {
+        document.getElementById('currentLangLabel').textContent = label;
+    }
+    // Hide dropdown if clicked outside
+    document.addEventListener('click', function(e) {
+        var btn = document.getElementById('langDropdownBtn');
+        var dd = document.getElementById('langDropdown');
+        if (!btn.contains(e.target) && !dd.contains(e.target)) {
+            dd.style.display = 'none';
+        }
+        // Hide profile popup if click outside
+        var prof = document.getElementById('profileInfo');
+        var popup = document.getElementById('profileDetailsPopup');
+        if (popup.style.display === 'block' && !prof.contains(e.target) && !popup.contains(e.target)) {
+            popup.style.display = 'none';
+        }
+    });
+
+    // Profile popup logic
+    function toggleProfileDetails() {
+        var popup = document.getElementById('profileDetailsPopup');
+        if (popup.style.display === 'block') {
+            popup.style.display = 'none';
+            return;
+        }
+        // Fill user info from localStorage
+        document.getElementById('profileName').textContent = "Name: " + (localStorage.getItem('userName') || '-');
+        document.getElementById('profileEmail').textContent = "Email: " + (localStorage.getItem('userEmail') || '-');
+        document.getElementById('profileAge').textContent = "Age: " + (localStorage.getItem('userAge') || '-');
+        document.getElementById('profileOcc').textContent = "Occupation: " + (localStorage.getItem('userOcc') || '-');
+        popup.style.display = 'block';
+    }
+    function closeProfileDetails() {
+        document.getElementById('profileDetailsPopup').style.display = 'none';
+    }
+</script>
+<style>
+    .topbar {
+        width: 100%;
+        background-color: #fff4cc;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 80px;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 24px;
+    }
+    .logo-title img {
+        height: 70px !important;
+        width: auto !important;
+        margin-right: 18px !important;
+    }
+    .profile-circle {
+        background-color: #ddd;
+        border-radius: 50%;
+        width: 45px !important;
+        height: 45px !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.3em;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(46,139,87,0.07);
+    }
+    .profile-circle:hover {
+        box-shadow: 0 4px 16px rgba(46,139,87,0.15);
+    }
+    .lang-switch {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    @media (max-width: 900px) {
+        .topbar { flex-direction: column; align-items: flex-start; min-height: 60px; padding: 0 10px; }
+        .logo-title { justify-content: center !important; min-width: 0 !important; }
+        .logo-title strong { font-size: 1.2em !important; }
+        .logo-title img { height: 45px !important; }
+        .profile-circle { width: 35px !important; height: 35px !important; font-size: 1em; }
+        #profileDetailsPopup { min-width: 150px !important; right: 10px !important; }
+        .topbar > div[style*="flex:2"] { display: none !important; }
+    }
+</style>
+
+  <!-- START PAGE -->
+  <section class="section active" id="startSection">
+    <h2>Welcome to JeevaWell</h2>
+    <img src="photo1 copy 2.png" alt="Main Image" class="img-main">
+    <button onclick="showSection('loginSection')">Login</button>
+    <button onclick="showSection('signupSection')">Sign Up</button>
+  </section>
+
+  <!-- LOGIN SECTION -->
+  <section class="section" id="loginSection">
+    <h2 id="login-heading">Login</h2>
+    <form onsubmit="return handleLogin()">
+      <input type="email" id="loginEmail" placeholder="Email" required><br>
+      <input type="password" id="loginPassword" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
+  </section>
+
+  <!-- SIGNUP SECTION -->
+  <section class="section" id="signupSection">
+    <h2 id="signup-heading">Create Your Profile</h2>
+    <form onsubmit="return handleSignup()">
+      <input type="email" id="signupEmail" placeholder="Email" required><br>
+      <input type="password" id="signupPassword" placeholder="Password" required><br>
+      <input type="text" id="signupName" placeholder="Full Name" required><br>
+      <input type="number" id="signupAge" placeholder="Age" required><br>
+      <select id="signupGender" required>
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select><br>
+      <input type="text" id="signupOcc" placeholder="Occupation" required><br>
+      <button type="submit">Sign Up</button>
+    </form>
+  </section>
+
+<!-- MAIN SECTION -->
+<section class="section" id="mainSection">
+    <h1 style="font-size:2.3em; color:#2e8b57; margin-bottom:10px;">Welcome To JeevaWell!</h1>
+    <h2 id="main-subtitle" style="font-weight:400;">Your Health, Our Priority</h2>
+    <div class="main-options-row">
+        <button class="main-btn main-ayurveda" onclick="showAyurAllo('ayurveda')">
+            <img src="https://img.icons8.com/color/96/ayurveda.png" alt="Ayurveda" class="option-img"><br>
+            <span style="font-size:1.5em;font-weight:bold;">Ayurveda</span>
+        </button>
+        <button class="main-btn main-allopathy" onclick="showAyurAllo('allopathy')">
+            <img src="https://img.icons8.com/color/96/pill.png" alt="Allopathy" class="option-img"><br>
+            <span style="font-size:1.5em;font-weight:bold;">Allopathy</span>
+        </button>
+        </div>
+        <!-- New row for Yoga, BMI, Diet -->
+        <div class="main-options-row">
+            <button class="main-btn main-yoga" onclick="showSection('yogaSection')">
+                <img src="https://img.icons8.com/color/96/yoga.png" alt="Yoga" class="option-img"><br>
+                <span style="font-size:1.5em;font-weight:bold;">Yoga</span>
+            </button>
+            <button class="main-btn main-bmi" onclick="showSection('bmiSection')">
+                <img src="https://img.icons8.com/color/96/scale.png" alt="BMI" class="option-img"><br>
+                <span style="font-size:1.5em;font-weight:bold;">BMI</span>
+            </button>
+            <button class="main-btn main-diet" onclick="showSection('dietSection')">
+                <img src="https://img.icons8.com/color/96/salad.png" alt="Diet" class="option-img"><br>
+                <span style="font-size:1.5em;font-weight:bold;">Diet</span>
+            </button>
+        </div>
+    </section>
+
+<!-- AYURVEDA SECTION -->
+<section class="section" id="ayurvedaSection">
+    <h2 style="color:#2e8b57;font-size:2em;">Ayurvedic Remedies</h2>
+    <div style="margin:20px 0;">
+        <input type="text" id="ayurvedaSearch" placeholder="Enter your disease (e.g. cough)" oninput="toggleAyurvedaEnter()" style="width:70%;max-width:300px;">
+        <button id="ayurvedaEnterBtn" onclick="searchAyurveda()" style="display:none;">Enter</button>
+    </div>
+    <div id="ayurvedaResults"></div>
+    <div id="ayurvedaNote" style="margin-top:20px;"></div>
+    <button onclick="showSection('mainSection')">Back</button>
+</section>
+
+<!-- ALLOPATHY SECTION -->
+<section class="section" id="allopathySection">
+    <h2 style="color:#2e8b57;font-size:2em;">Allopathy Medicines</h2>
+    <div style="margin:20px 0;">
+        <input type="text" id="allopathySearch" placeholder="Enter your disease (e.g. fever)" oninput="toggleAllopathyEnter()" style="width:70%;max-width:300px;">
+        <button id="allopathyEnterBtn" onclick="searchAllopathy()" style="display:none;">Enter</button>
+    </div>
+    <div id="allopathyResults"></div>
+    <div id="allopathyNote" style="margin-top:20px;"></div>
+    <button onclick="showSection('mainSection')">Back</button>
+</section>
+
+<!-- BMI SECTION -->
+<section class="section" id="bmiSection">
+    <h2 style="color:#2e8b57;">BMI Calculator</h2>
+    <div style="background:#fffbe6;border-radius:18px;padding:25px 15px;max-width:350px;margin:0 0 20px auto;box-shadow:0 2px 8px rgba(46,139,87,0.07);">
+        <input type="number" id="bmiWeight" placeholder="Weight (kg)">
+        <input type="number" id="bmiHeight" placeholder="Height (cm)">
+        <button onclick="calculateBMI()">Calculate BMI</button>
+        <div id="bmiResult" style="margin-top:10px;"></div>
+    </div>
+    <img src="https://www.cdc.gov/healthyweight/images/assessing/bmi-adult-fb-600x315.jpg" alt="BMI Chart" style="width:90%;max-width:400px;margin:20px auto 10px auto;display:block;border-radius:15px;">
+    <div id="bmiAdvice" style="margin:20px auto 0 auto;max-width:400px;text-align:left;font-size:1.1em;"></div>
+    <button onclick="showSection('mainSection')" style="margin-top:20px;">Back</button>
+</section>
+
+<!-- DIET SECTION -->
+<section class="section" id="dietSection">
+    <h2 style="color:#2e8b57;">Healthy Diets</h2>
+    <div style="background:#e6f9ed;border-radius:18px;padding:20px 18px;max-width:350px;margin:20px 0 0 40px;box-shadow:0 2px 8px rgba(46,139,87,0.07);">
+        <ul style="text-align:left;max-width:400px;margin:0 auto;">
+            <li>Eat a variety of foods including vegetables, fruits, and whole-grain products.</li>
+            <li>Include lean meats, poultry, fish, beans, eggs, and nuts.</li>
+            <li>Limit saturated fat, trans fat, salt, and added sugars.</li>
+            <li>Drink plenty of water.</li>
+        </ul>
+    </div>
+    <button onclick="showSection('mainSection')" style="margin-top:20px;">Back</button>
+</section>
+<!-- YOGA SECTION -->
+<section class="section" id="yogaSection">
+    <h2 style="color:#2e8b57;font-size:2em;">Yoga Poses & Benefits</h2>
+    <div class="yoga-list" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; background: #fffbe6; border-radius: 18px; padding: 36px 10px; max-width: 1200px; margin: 0 auto 20px auto; box-shadow: 0 2px 8px rgba(46,139,87,0.07);">
+        <!-- 1 -->
+        <div class="yoga-item" </div>style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/yoga.png" alt="Tadasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">T</div>adasana (Mountain Pose)</strong>
+            <p style="font-size:1.12em;">Improves posture, balance, and calm focus.</p>
+        </div>
+        <!-- 2 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="h</div>ttps://img.icons8.com/color/128/lotus-position.png" alt="Padmasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Padmasana (Lotus Pose)</strong>
+            <p style="font-size:1.12em;">Calms the brain, stretches ankles and knees.</p>
+        </div>
+        <!-- 3 -->
+        <div class="yoga-item" style="width:220p</div>x; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/tree.png" alt="Vrikshasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Vrikshasana (Tree Pose)</strong>
+         </div>   <p style="font-size:1.12em;">Improves balance and stability in the legs.</p>
+        </div>
+        <!-- 4 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/warrior-po</div>se.png" alt="Virabhadrasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Virabhadrasana (Warrior Pose)</strong>
+            <p style="font-size:1.12em;">Strengthens arms, legs, and improves concentration.</p>
+        </div>
+        <!-- 5 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-</div>items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/cobra.png" alt="Bhujangasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Bhujangasana (Cobra Pose)</strong>
+            <p style="font-size:1.12em;">Strengthens sp</div>ine, relieves stress and fatigue.</p>
+        </div>
+        <!-- 6 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/downward-dog.png" alt="Adho Mukha Svanasana" style="width:100px;hei</div>ght:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Adho Mukha Svanasana (Downward Dog)</strong>
+            <p style="font-size:1.12em;">Stretches hamstrings, calves, and energizes the body.</p>
+        </div>
+        <!-- 7 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align</div>-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/child-pose.png" alt="Balasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Balasana (Child's Pose)</strong>
+            <p style="font-size:1.12em;">Relie</div>ves stress and fatigue, gently stretches hips.</p>
+        </div>
+        <!-- 8 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/bridge-pose.png" alt="Setu Bandhasana" style="wid</div>th:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Setu Bandhasana (Bridge Pose)</strong>
+            <p style="font-size:1.12em;">Strengthens back, buttocks, and relieves anxiety.</p>
+        </div>
+        <!-- 9 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; backg</div>round:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;"></div>
+            <img src="https://img.icons8.com/color/128/plank.png" alt="Phalakasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Phalakasana (Plank Pose)</strong>
+            <p style="font-size:1.12em;">Strengthens core, arms, and wrists.</p>
+     </div>   </div>
+        <!-- 10 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;"></div>
+            <img src="https://img.icons8.com/color/128/boat-pose.png" alt="Navasana" style="width:100px;height:100px;object-fit:contain;">
+       </div>     <strong style="font-size:1.22em;margin:14px 0 8px 0;">Navasana (Boat Pose)</strong>
+            <p style="font-size:1.12em;">Tones abdominal muscles and improves balance.</p>
+        </div>
+        <!-- 11 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8p</div>x rgba(46,139,87,0.07); padding:22px;"></div>
+            <img src="https://img.icons8.com/color/128/bow-pose.png" alt="Dhanurasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Dhanurasana (Bow Pose)</strong>
+            <p style="font-size:1.12em;">Stretches the entire front of the body, improves posture.</p>
+        </div>
+        <!-- 12 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/camel-pose.png" alt="Ustrasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Ustrasana (Camel Pose)</strong>
+            <p style="font-size:1.12em;">Improves flexibility of the spine and relieves backache.</p>
+        </div>
+        <!-- 13 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/shoulder-stand.png" alt="Sarvangasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Sarvangasana (Shoulder Stand)</strong>
+            <p style="font-size:1.12em;">Improves blood circulation and strengthens shoulders.</p>
+        </div>
+        <!-- 14 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/plough-pose.png" alt="Halasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Halasana (Plough Pose)</strong>
+            <p style="font-size:1.12em;">Stretches the spine and shoulders, reduces stress.</p>
+        </div>
+        <!-- 15 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/fish-pose.png" alt="Matsyasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Matsyasana (Fish Pose)</strong>
+            <p style="font-size:1.12em;">Stretches chest and neck, relieves tension.</p>
+        </div>
+        <!-- 16 -->
+        <div class="yoga-item" style="width:220px; min-height:290px; display:flex; flex-direction:column; align-items:center; background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(46,139,87,0.07); padding:22px;">
+            <img src="https://img.icons8.com/color/128/corpse-pose.png" alt="Savasana" style="width:100px;height:100px;object-fit:contain;">
+            <strong style="font-size:1.22em;margin:14px 0 8px 0;">Savasana (Corpse Pose)</strong>
+            <p style="font-size:1.12em;">Relaxes the body and reduces stress, improves sleep.</p>
+        </div>
+    </div>
+    <button onclick="showSection('mainSection')" style="margin-top:24px;font-size:1.1em;">Back</button>
+</section>
+
+<style>
+    .main-options-row {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        margin: 30px 0 10px 0;
+        flex-wrap: wrap;
+    }
+    .main-btn {
+        background: #f7e9c7;
+        border: 2.5px solid #2e8b57;
+        border-radius: 22px;
+        padding: 35px 45px;
+        font-size: 1.3em;
+        color: #2e8b57;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(46,139,87,0.08);
+        transition: background 0.2s, transform 0.2s;
+        margin: 10px;
+        min-width: 170px;
+        min-height: 170px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .main-ayurveda { background: #fffbe6; }
+    .main-allopathy { background: #e6f9ed; }
+    .main-btn:hover {
+        background: #e6f9ed;
+        transform: translateY(-3px) scale(1.04);
+    }
+    .sub-options-row {
+        display: flex;
+        justify-content: flex-start;
+        gap: 0;
+        margin: 40px 0 0 0;
+        flex-wrap: wrap;
+    }
+    .sub-box {
+        border-radius: 18px;
+        box-shadow: 0 2px 8px rgba(46,139,87,0.07);
+        margin: 0 18px 0 0;
+        padding: 18px 10px 10px 10px;
+        min-width: 120px;
+        min-height: 120px;
+        background: #fffbe6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .sub-yoga { margin-left: 30px; background: #fffbe6; }
+    .sub-bmi { margin-left: 80px; background: #e6f9ed; }
+    .sub-diet { margin-left: 40px; background: #f7e9c7; }
+    .sub-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.1em;
+        color: #2e8b57;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .sub-btn:hover { color: #1c5c3a; }
+    .option-img { width: 60px; height: 60px; }
+    .option-img-sm { width: 32px; height: 32px; }
+    .yoga-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+        margin: 20px 0;
+    }
+    .yoga-item {
+        background: #fffbe6;
+        border-radius: 14px;
+        padding: 15px;
+        width: 220px;
+        box-shadow: 0 2px 8px rgba(46,139,87,0.07);
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    @media (max-width: 900px) {
+        .main-options-row { gap: 20px; }
+        .main-btn { min-width: 120px; min-height: 120px; font-size: 1em; padding: 20px 15px; }
+        .sub-options-row { flex-direction: column; gap: 15px; }
+        .sub-box { margin-left: 0 !important; margin-top: 15px; }
+        .yoga-list { flex-direction: column; gap: 10px; }
+        .yoga-item { width: 95%; }
+    }
+</style>
+
+<script>
+    // Show Ayurveda or Allopathy section
+    function showAyurAllo(type) {
+        if (type === 'ayurveda') {
+            // Set Ayurveda image and label on the button (if needed)
+            document.querySelector('.main-ayurveda img').src = "https://img.icons8.com/color/96/basil.png";
+            document.querySelector('.main-ayurveda img').alt = "Ayurveda (Tulsi)";
+            showSection('ayurvedaSection');
+        } else {
+            showSection('allopathySection');
+        }
+    }
+
+    // Show "Enter" button when typing
+    function toggleAyurvedaEnter() {
+        document.getElementById('ayurvedaEnterBtn').style.display =
+            document.getElementById('ayurvedaSearch').value.trim() ? 'inline-block' : 'none';
+    }
+    function toggleAllopathyEnter() {
+        document.getElementById('allopathyEnterBtn').style.display =
+            document.getElementById('allopathySearch').value.trim() ? 'inline-block' : 'none';
+    }
+
+    // Ayurveda remedies data (expanded, 100+ diseases, all with images)
+    const ayurvedaData = [
+        { disease: "acidity", remedy: "Aloe vera juice and cumin seeds.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "allergy", remedy: "Neem leaves and turmeric.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "anemia", remedy: "Beetroot and pomegranate juice.", image: "https://img.icons8.com/color/96/pomegranate.png" },
+        { disease: "anxiety", remedy: "Ashwagandha and Brahmi tea.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "asthma", remedy: "Tulsi leaves and honey.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "back pain", remedy: "Ginger oil massage.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "blood pressure", remedy: "Garlic and Ashwagandha.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "bronchitis", remedy: "Licorice root tea.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "cancer", remedy: "Turmeric and wheatgrass juice (supportive).", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "cholesterol", remedy: "Garlic and flax seeds.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "cold", remedy: "Ginger, black pepper, and honey.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "constipation", remedy: "Triphala powder with warm water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "cough", remedy: "Tulsi leaves, honey, and ginger tea.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "dandruff", remedy: "Neem oil and lemon juice.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "depression", remedy: "Brahmi and Ashwagandha.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "diabetes", remedy: "Fenugreek seeds and bitter gourd juice.", image: "https://img.icons8.com/color/96/bitter-melon.png" },
+        { disease: "diarrhea", remedy: "Bael fruit and pomegranate.", image: "https://img.icons8.com/color/96/pomegranate.png" },
+        { disease: "dysentery", remedy: "Bael fruit and isabgol.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "ear pain", remedy: "Garlic oil drops.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "eczema", remedy: "Neem paste and coconut oil.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "eye strain", remedy: "Triphala water wash.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "fatigue", remedy: "Ashwagandha and amla juice.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "fever", remedy: "Giloy juice and neem leaves.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "gas", remedy: "Ajwain seeds and warm water.", image: "https://img.icons8.com/color/96/caraway.png" },
+        { disease: "gout", remedy: "Cherries and turmeric.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "hair fall", remedy: "Amla oil and bhringraj.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "headache", remedy: "Peppermint oil massage and Brahmi tea.", image: "https://img.icons8.com/color/96/peppermint.png" },
+        { disease: "heartburn", remedy: "Fennel seeds and cold milk.", image: "https://img.icons8.com/color/96/caraway.png" },
+        { disease: "hepatitis", remedy: "Kutki and aloe vera juice.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "high blood pressure", remedy: "Garlic and Ashwagandha.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "high cholesterol", remedy: "Flax seeds and garlic.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "hypertension", remedy: "Ashwagandha and garlic.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "indigestion", remedy: "Ajwain seeds and warm water.", image: "https://img.icons8.com/color/96/caraway.png" },
+        { disease: "insomnia", remedy: "Brahmi and warm milk.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "irritable bowel", remedy: "Isabgol and curd.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "jaundice", remedy: "Sugarcane juice and kutki.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "joint pain", remedy: "Turmeric and ginger paste.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "kidney stones", remedy: "Barley water and lemon juice.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "liver disorder", remedy: "Amla and kutki.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "low blood pressure", remedy: "Raisins and ashwagandha.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "malaria", remedy: "Giloy and tulsi decoction.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "memory loss", remedy: "Brahmi and almonds.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "migraine", remedy: "Peppermint oil and sandalwood paste.", image: "https://img.icons8.com/color/96/peppermint.png" },
+        { disease: "mouth ulcer", remedy: "Honey and coconut oil.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "muscle pain", remedy: "Turmeric and ginger paste.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "nausea", remedy: "Ginger tea and lemon.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "obesity", remedy: "Triphala and lemon water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "osteoporosis", remedy: "Sesame seeds and amla.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "piles", remedy: "Isabgol and buttermilk.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "pimples", remedy: "Neem paste and turmeric.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "psoriasis", remedy: "Aloe vera gel and neem oil.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "sinusitis", remedy: "Steam inhalation with eucalyptus oil.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "skin allergy", remedy: "Neem paste and turmeric.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "skin rash", remedy: "Aloe vera gel and sandalwood paste.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "sore throat", remedy: "Turmeric milk and honey.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "stress", remedy: "Brahmi and Shankhpushpi syrup.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "thyroid", remedy: "Coriander seeds and coconut water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "toothache", remedy: "Clove oil and salt water rinse.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "ulcer", remedy: "Licorice root and honey.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "urinary infection", remedy: "Cranberry juice and barley water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "vertigo", remedy: "Ginger tea and lemon.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "vomiting", remedy: "Ginger and lemon juice.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "weakness", remedy: "Ashwagandha and amla.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "weight loss", remedy: "Triphala and lemon water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "weight gain", remedy: "Ashwagandha and milk.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "wounds", remedy: "Turmeric paste and honey.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        // Add more diseases for a total of 100+
+        { disease: "acne", remedy: "Neem paste and turmeric.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "arthritis", remedy: "Turmeric and ginger.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "bloating", remedy: "Ajwain and fennel seeds.", image: "https://img.icons8.com/color/96/caraway.png" },
+        { disease: "boils", remedy: "Neem paste and turmeric.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "burns", remedy: "Aloe vera gel.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "chickenpox", remedy: "Neem bath and calamine.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "colic", remedy: "Hing (asafoetida) paste.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "cystitis", remedy: "Barley water and coriander.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "dyspepsia", remedy: "Ajwain and ginger.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "ear infection", remedy: "Garlic oil drops.", image: "https://img.icons8.com/color/96/garlic.png" },
+        { disease: "epilepsy", remedy: "Brahmi and vacha.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "fainting", remedy: "Tulsi and cardamom.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "flu", remedy: "Ginger and tulsi tea.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "gallstones", remedy: "Radish juice.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "gastritis", remedy: "Amla and licorice.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "goiter", remedy: "Coriander seeds.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "gout", remedy: "Cherries and turmeric.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "hair loss", remedy: "Amla oil and bhringraj.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "halitosis", remedy: "Cardamom and clove.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "hay fever", remedy: "Tulsi and turmeric.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "hepatitis", remedy: "Kutki and aloe vera.", image: "https://img.icons8.com/color/96/aloe-vera.png" },
+        { disease: "hives", remedy: "Neem paste.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "impotence", remedy: "Ashwagandha and shilajit.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "indigestion", remedy: "Ajwain and ginger.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "jaundice", remedy: "Sugarcane juice and kutki.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "kidney infection", remedy: "Barley water.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "liver cirrhosis", remedy: "Amla and kutki.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "measles", remedy: "Neem bath.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "menstrual pain", remedy: "Ginger tea and ajwain.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "motion sickness", remedy: "Ginger and lemon.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "mouth sores", remedy: "Honey and coconut oil.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "mumps", remedy: "Neem paste.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "nasal congestion", remedy: "Steam inhalation.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "night blindness", remedy: "Carrot juice.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "nosebleed", remedy: "Cold compress and pomegranate juice.", image: "https://img.icons8.com/color/96/pomegranate.png" },
+        { disease: "paralysis", remedy: "Ashwagandha and massage.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "parkinson's", remedy: "Mucuna pruriens.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "piles", remedy: "Isabgol and buttermilk.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "pneumonia", remedy: "Tulsi and ginger tea.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "prostate", remedy: "Pumpkin seeds.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "rheumatism", remedy: "Turmeric and ginger.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "ringworm", remedy: "Neem paste.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "scabies", remedy: "Neem oil.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "sciatica", remedy: "Ginger oil massage.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "shingles", remedy: "Neem paste.", image: "https://img.icons8.com/color/96/neem-leaf.png" },
+        { disease: "sinus", remedy: "Steam inhalation.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "sprain", remedy: "Turmeric paste.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "stomach ache", remedy: "Ajwain and ginger.", image: "https://img.icons8.com/color/96/ginger.png" },
+        { disease: "tonsillitis", remedy: "Turmeric milk.", image: "https://img.icons8.com/color/96/turmeric.png" },
+        { disease: "typhoid", remedy: "Pomegranate juice.", image: "https://img.icons8.com/color/96/pomegranate.png" },
+        { disease: "ulcer", remedy: "Licorice root and honey.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "urinary tract infection", remedy: "Cranberry juice.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "varicose veins", remedy: "Horse chestnut.", image: "https://img.icons8.com/color/96/leaf.png" },
+        { disease: "warts", remedy: "Banana peel.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "whooping cough", remedy: "Tulsi and honey.", image: "https://img.icons8.com/color/96/basil.png" },
+        { disease: "worm infestation", remedy: "Papaya seeds.", image: "https://img.icons8.com/color/96/fruit.png" },
+        { disease: "yawning", remedy: "Ashwagandha and amla.", image: "https://img.icons8.com/color/96/leaf.png" }
+    ];
+
+    // Suggest diseases as user types
+    document.getElementById('ayurvedaSearch').addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        const suggestDivId = 'ayurvedaSuggestList';
+        let suggestDiv = document.getElementById(suggestDivId);
+        if (!suggestDiv) {
+            suggestDiv = document.createElement('div');
+            suggestDiv.id = suggestDivId;
+            suggestDiv.style = "background:#fffbe6;border:1px solid #e6e6e6;border-radius:8px;max-width:300px;margin:0 auto 8px auto;text-align:left;position:relative;z-index:10;";
+            this.parentNode.appendChild(suggestDiv);
+        }
+        if (!query) {
+            suggestDiv.innerHTML = '';
+            return;
+        }
+        // Find matching diseases
+        const matches = ayurvedaData
+            .filter(item => item.disease.startsWith(query))
+            .slice(0, 8); // show up to 8 suggestions
+        if (matches.length === 0) {
+            suggestDiv.innerHTML = '';
+            return;
+        }
+        suggestDiv.innerHTML = matches.map(item =>
+            `<div style="padding:6px 10px;cursor:pointer;" onclick="document.getElementById('ayurvedaSearch').value='${item.disease}';document.getElementById('ayurvedaSuggestList').innerHTML='';toggleAyurvedaEnter();">${item.disease.charAt(0).toUpperCase() + item.disease.slice(1)}</div>`
+        ).join('');
+    });
+
+    function searchAyurveda() {
+        const query = document.getElementById('ayurvedaSearch').value.trim().toLowerCase();
+        const results = ayurvedaData.filter(item => item.disease.includes(query));
+        const container = document.getElementById('ayurvedaResults');
+        const note = document.getElementById('ayurvedaNote');
+        if (!query) { container.innerHTML = ""; note.innerHTML = ""; return; }
+        if (results.length === 0) {
+            container.innerHTML = "<p>No ayurvedic remedy found.</p>";
+            note.innerHTML = "";
+            return;
+        }
+        container.innerHTML = results.map(item => `
+            <div style="background:#f7fbe6;padding:15px;border-radius:12px;margin:10px 0;">
+            
+                <strong style="font-size:1.2em;">${item.disease.charAt(0).toUpperCase() + item.disease.slice(1)}</strong><br>
+                <span>${item.remedy}</span>
+            </div>
+        `).join('');
+        note.innerHTML = "<b style='color:#e67e22;'>Note:</b> <b>These remedies are for general awareness. Please consult a doctor before starting any treatment. Stay happy and healthy!</b>";
+    }
+
+    // Allopathy medicines data (expanded, 100+ diseases)
+    const allopathyData = [
+        { disease: "fever", medicine: "Paracetamol", details: "Take 500mg every 6 hours as needed.", precautions: "Avoid overdose. Not for severe liver disease.", sideEffects: "Nausea, rash, liver issues (rare)." },
+        { disease: "cough", medicine: "Dextromethorphan syrup", details: "10ml twice daily.", precautions: "Consult doctor if persistent.", sideEffects: "Drowsiness, dizziness." },
+        { disease: "acidity", medicine: "Pantoprazole", details: "40mg once daily before food.", precautions: "Not for long-term use without advice.", sideEffects: "Headache, diarrhea." },
+        { disease: "cold", medicine: "Cetirizine", details: "10mg once daily.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness, dry mouth." },
+        { disease: "headache", medicine: "Ibuprofen", details: "400mg as needed after food.", precautions: "Avoid in gastric ulcer, kidney disease.", sideEffects: "Stomach upset, dizziness." },
+        { disease: "indigestion", medicine: "Domperidone", details: "10mg before meals.", precautions: "Not for long-term use.", sideEffects: "Dry mouth, headache." },
+        { disease: "constipation", medicine: "Lactulose syrup", details: "10-15ml at bedtime.", precautions: "Drink plenty of water.", sideEffects: "Bloating, gas." },
+        { disease: "diabetes", medicine: "Metformin", details: "500mg twice daily after food.", precautions: "Monitor blood sugar regularly.", sideEffects: "Nausea, diarrhea." },
+        { disease: "hypertension", medicine: "Amlodipine", details: "5mg once daily.", precautions: "Monitor blood pressure.", sideEffects: "Swelling, headache." },
+        { disease: "stress", medicine: "Alprazolam (only on doctor's advice)", details: "0.25mg at bedtime if prescribed.", precautions: "May cause drowsiness, habit forming.", sideEffects: "Sleepiness, confusion." },
+        { disease: "allergy", medicine: "Loratadine", details: "10mg once daily.", precautions: "Avoid alcohol.", sideEffects: "Sleepiness, dry mouth." },
+        { disease: "anemia", medicine: "Ferrous sulfate", details: "1 tablet daily after food.", precautions: "Take with vitamin C.", sideEffects: "Constipation, dark stools." },
+        { disease: "anxiety", medicine: "Clonazepam (doctor's advice)", details: "0.25mg as needed.", precautions: "Habit forming.", sideEffects: "Drowsiness, confusion." },
+        { disease: "asthma", medicine: "Salbutamol inhaler", details: "2 puffs as needed.", precautions: "Do not overuse.", sideEffects: "Tremor, palpitations." },
+        { disease: "back pain", medicine: "Diclofenac", details: "50mg twice daily after food.", precautions: "Avoid in ulcers.", sideEffects: "Stomach upset." },
+        { disease: "bronchitis", medicine: "Ambroxol syrup", details: "10ml twice daily.", precautions: "Consult doctor if persistent.", sideEffects: "Nausea, rash." },
+        { disease: "cancer pain", medicine: "Morphine (doctor only)", details: "As prescribed.", precautions: "Strictly under supervision.", sideEffects: "Constipation, drowsiness." },
+        { disease: "cholesterol", medicine: "Atorvastatin", details: "10mg once daily at night.", precautions: "Monitor liver function.", sideEffects: "Muscle pain." },
+        { disease: "diarrhea", medicine: "ORS + Loperamide", details: "ORS as needed, Loperamide 2mg after loose stool.", precautions: "Hydrate well.", sideEffects: "Constipation." },
+        { disease: "dysentery", medicine: "Metronidazole", details: "400mg thrice daily for 5 days.", precautions: "Avoid alcohol.", sideEffects: "Metallic taste, nausea." },
+        { disease: "ear pain", medicine: "Paracetamol + Ear drops", details: "As needed.", precautions: "Consult doctor if severe.", sideEffects: "Rare." },
+        { disease: "eczema", medicine: "Hydrocortisone cream", details: "Apply thin layer twice daily.", precautions: "Short-term use.", sideEffects: "Skin thinning." },
+        { disease: "eye infection", medicine: "Moxifloxacin eye drops", details: "1 drop 4 times daily.", precautions: "Do not touch tip.", sideEffects: "Burning, irritation." },
+        { disease: "fatigue", medicine: "Multivitamin", details: "1 tablet daily.", precautions: "Do not overdose.", sideEffects: "Rare." },
+        { disease: "gas", medicine: "Simethicone", details: "40mg after meals.", precautions: "Short-term use.", sideEffects: "Rare." },
+        { disease: "gout", medicine: "Allopurinol", details: "100mg once daily.", precautions: "Monitor uric acid.", sideEffects: "Rash, GI upset." },
+        { disease: "hair fall", medicine: "Minoxidil lotion", details: "Apply to scalp twice daily.", precautions: "External use only.", sideEffects: "Itching, irritation." },
+        { disease: "heartburn", medicine: "Ranitidine", details: "150mg twice daily.", precautions: "Short-term use.", sideEffects: "Headache." },
+        { disease: "hepatitis", medicine: "Consult specialist", details: "As prescribed.", precautions: "Follow doctor's advice.", sideEffects: "Varies." },
+        { disease: "high blood pressure", medicine: "Telmisartan", details: "40mg once daily.", precautions: "Monitor BP.", sideEffects: "Dizziness." },
+        { disease: "high cholesterol", medicine: "Rosuvastatin", details: "10mg once daily.", precautions: "Monitor liver function.", sideEffects: "Muscle pain." },
+        { disease: "insomnia", medicine: "Zolpidem (doctor's advice)", details: "5mg at bedtime.", precautions: "Short-term use.", sideEffects: "Drowsiness." },
+        { disease: "irritable bowel", medicine: "Dicyclomine", details: "10mg thrice daily.", precautions: "Avoid in glaucoma.", sideEffects: "Dry mouth." },
+        { disease: "jaundice", medicine: "Supportive care", details: "Consult doctor.", precautions: "Monitor liver function.", sideEffects: "Varies." },
+        { disease: "joint pain", medicine: "Naproxen", details: "250mg twice daily after food.", precautions: "Avoid in ulcers.", sideEffects: "Stomach upset." },
+        { disease: "kidney stones", medicine: "Potassium citrate", details: "10ml thrice daily.", precautions: "Monitor kidney function.", sideEffects: "GI upset." },
+        { disease: "liver disorder", medicine: "Liver tonic", details: "As prescribed.", precautions: "Consult doctor.", sideEffects: "Rare." },
+        { disease: "low blood pressure", medicine: "ORS, salt water", details: "As needed.", precautions: "Consult doctor if persistent.", sideEffects: "Rare." },
+        { disease: "malaria", medicine: "Artemether-Lumefantrine", details: "As prescribed.", precautions: "Complete course.", sideEffects: "Nausea, headache." },
+        { disease: "memory loss", medicine: "Piracetam", details: "800mg twice daily.", precautions: "Consult doctor.", sideEffects: "Nervousness." },
+        { disease: "migraine", medicine: "Sumatriptan", details: "50mg as needed.", precautions: "Avoid overuse.", sideEffects: "Drowsiness." },
+        { disease: "mouth ulcer", medicine: "Chlorhexidine gel", details: "Apply 2-3 times daily.", precautions: "External use only.", sideEffects: "Burning." },
+        { disease: "muscle pain", medicine: "Paracetamol", details: "500mg as needed.", precautions: "Avoid overdose.", sideEffects: "Rare." },
+        { disease: "nausea", medicine: "Ondansetron", details: "4mg as needed.", precautions: "Short-term use.", sideEffects: "Constipation." },
+        { disease: "obesity", medicine: "Orlistat", details: "120mg thrice daily with meals.", precautions: "Low-fat diet.", sideEffects: "Oily stools." },
+        { disease: "osteoporosis", medicine: "Calcium + Vitamin D", details: "1 tablet daily.", precautions: "Monitor calcium.", sideEffects: "Constipation." },
+        { disease: "piles", medicine: "Daflon", details: "500mg twice daily.", precautions: "Consult doctor.", sideEffects: "GI upset." },
+        { disease: "pimples", medicine: "Clindamycin gel", details: "Apply twice daily.", precautions: "External use only.", sideEffects: "Dryness." },
+        { disease: "psoriasis", medicine: "Betamethasone cream", details: "Apply thin layer.", precautions: "Short-term use.", sideEffects: "Skin thinning." },
+        { disease: "sinusitis", medicine: "Amoxicillin-Clavulanate", details: "625mg thrice daily.", precautions: "Complete course.", sideEffects: "Diarrhea." },
+        { disease: "skin allergy", medicine: "Cetirizine", details: "10mg once daily.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness." },
+        { disease: "skin rash", medicine: "Calamine lotion", details: "Apply as needed.", precautions: "External use only.", sideEffects: "Rare." },
+        { disease: "sore throat", medicine: "Azithromycin", details: "500mg once daily for 3 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "thyroid", medicine: "Levothyroxine", details: "As prescribed.", precautions: "Empty stomach.", sideEffects: "Palpitations." },
+        { disease: "toothache", medicine: "Ibuprofen", details: "400mg as needed.", precautions: "Avoid in ulcers.", sideEffects: "Stomach upset." },
+        { disease: "ulcer", medicine: "Sucralfate", details: "1g before meals.", precautions: "Take on empty stomach.", sideEffects: "Constipation." },
+        { disease: "urinary infection", medicine: "Nitrofurantoin", details: "100mg twice daily for 5 days.", precautions: "Complete course.", sideEffects: "Nausea." },
+        { disease: "vertigo", medicine: "Betahistine", details: "16mg twice daily.", precautions: "Consult doctor.", sideEffects: "Nausea." },
+        { disease: "vomiting", medicine: "Domperidone", details: "10mg as needed.", precautions: "Short-term use.", sideEffects: "Dry mouth." },
+        { disease: "weakness", medicine: "Vitamin B12", details: "As prescribed.", precautions: "Monitor levels.", sideEffects: "Rare." },
+        { disease: "weight loss", medicine: "Orlistat", details: "120mg thrice daily.", precautions: "Low-fat diet.", sideEffects: "Oily stools." },
+        { disease: "weight gain", medicine: "Cyproheptadine (doctor's advice)", details: "2mg twice daily.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness." },
+        { disease: "wounds", medicine: "Povidone iodine ointment", details: "Apply to wound.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "acne", medicine: "Benzoyl peroxide gel", details: "Apply once daily.", precautions: "External use only.", sideEffects: "Dryness." },
+        { disease: "arthritis", medicine: "Aceclofenac", details: "100mg twice daily after food.", precautions: "Avoid in ulcers.", sideEffects: "GI upset." },
+        { disease: "bloating", medicine: "Simethicone", details: "40mg after meals.", precautions: "Short-term use.", sideEffects: "Rare." },
+        { disease: "boils", medicine: "Mupirocin ointment", details: "Apply twice daily.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "burns", medicine: "Silver sulfadiazine cream", details: "Apply to burn area.", precautions: "External use only.", sideEffects: "Rash." },
+        { disease: "chickenpox", medicine: "Acyclovir", details: "800mg 5 times daily.", precautions: "Start early.", sideEffects: "Nausea." },
+        { disease: "colic", medicine: "Dicyclomine drops", details: "As prescribed.", precautions: "Consult pediatrician.", sideEffects: "Dry mouth." },
+        { disease: "cystitis", medicine: "Ciprofloxacin", details: "500mg twice daily for 5 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "dyspepsia", medicine: "Pantoprazole", details: "40mg once daily.", precautions: "Short-term use.", sideEffects: "Headache." },
+        { disease: "ear infection", medicine: "Ofloxacin ear drops", details: "2 drops thrice daily.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "epilepsy", medicine: "Sodium valproate", details: "As prescribed.", precautions: "Regular monitoring.", sideEffects: "Weight gain." },
+        { disease: "fainting", medicine: "ORS", details: "As needed.", precautions: "Consult doctor if recurrent.", sideEffects: "Rare." },
+        { disease: "flu", medicine: "Oseltamivir", details: "75mg twice daily for 5 days.", precautions: "Start early.", sideEffects: "Nausea." },
+        { disease: "gallstones", medicine: "Ursodeoxycholic acid", details: "300mg twice daily.", precautions: "Consult doctor.", sideEffects: "Diarrhea." },
+        { disease: "gastritis", medicine: "Rabeprazole", details: "20mg once daily.", precautions: "Short-term use.", sideEffects: "Headache." },
+        { disease: "goiter", medicine: "Levothyroxine", details: "As prescribed.", precautions: "Monitor thyroid.", sideEffects: "Palpitations." },
+        { disease: "hair loss", medicine: "Finasteride (men only)", details: "1mg once daily.", precautions: "Not for women.", sideEffects: "Decreased libido." },
+        { disease: "halitosis", medicine: "Chlorhexidine mouthwash", details: "Rinse twice daily.", precautions: "Do not swallow.", sideEffects: "Staining." },
+        { disease: "hay fever", medicine: "Fexofenadine", details: "120mg once daily.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness." },
+        { disease: "hives", medicine: "Cetirizine", details: "10mg once daily.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness." },
+        { disease: "impotence", medicine: "Sildenafil", details: "50mg as needed.", precautions: "Not with nitrates.", sideEffects: "Headache." },
+        { disease: "jaundice", medicine: "Supportive care", details: "Consult doctor.", precautions: "Monitor liver.", sideEffects: "Varies." },
+        { disease: "kidney infection", medicine: "Cefixime", details: "200mg twice daily for 7 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "liver cirrhosis", medicine: "Lactulose syrup", details: "10-15ml at bedtime.", precautions: "Monitor electrolytes.", sideEffects: "Bloating." },
+        { disease: "measles", medicine: "Supportive care", details: "Paracetamol as needed.", precautions: "Consult doctor.", sideEffects: "Varies." },
+        { disease: "menstrual pain", medicine: "Mefenamic acid", details: "250mg thrice daily.", precautions: "Avoid in ulcers.", sideEffects: "Stomach upset." },
+        { disease: "motion sickness", medicine: "Dimenhydrinate", details: "50mg as needed.", precautions: "May cause drowsiness.", sideEffects: "Sleepiness." },
+        { disease: "mouth sores", medicine: "Chlorhexidine gel", details: "Apply 2-3 times daily.", precautions: "External use only.", sideEffects: "Burning." },
+        { disease: "mumps", medicine: "Supportive care", details: "Paracetamol as needed.", precautions: "Consult doctor.", sideEffects: "Varies." },
+        { disease: "nasal congestion", medicine: "Xylometazoline nasal drops", details: "2 drops thrice daily.", precautions: "Short-term use.", sideEffects: "Irritation." },
+        { disease: "night blindness", medicine: "Vitamin A", details: "As prescribed.", precautions: "Avoid overdose.", sideEffects: "Headache." },
+        { disease: "nosebleed", medicine: "Oxymetazoline nasal spray", details: "As needed.", precautions: "Short-term use.", sideEffects: "Irritation." },
+        { disease: "paralysis", medicine: "Supportive care", details: "Consult neurologist.", precautions: "Varies.", sideEffects: "Varies." },
+        { disease: "parkinson's", medicine: "Levodopa-Carbidopa", details: "As prescribed.", precautions: "Regular monitoring.", sideEffects: "Nausea." },
+        { disease: "pneumonia", medicine: "Azithromycin", details: "500mg once daily for 5 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "prostate", medicine: "Tamsulosin", details: "0.4mg once daily.", precautions: "Monitor BP.", sideEffects: "Dizziness." },
+        { disease: "rheumatism", medicine: "Methotrexate", details: "As prescribed.", precautions: "Monitor blood counts.", sideEffects: "Mouth ulcers." },
+        { disease: "ringworm", medicine: "Clotrimazole cream", details: "Apply twice daily.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "scabies", medicine: "Permethrin cream", details: "Apply overnight.", precautions: "External use only.", sideEffects: "Itching." },
+        { disease: "sciatica", medicine: "Gabapentin", details: "300mg at night.", precautions: "Consult doctor.", sideEffects: "Drowsiness." },
+        { disease: "shingles", medicine: "Acyclovir", details: "800mg 5 times daily.", precautions: "Start early.", sideEffects: "Nausea." },
+        { disease: "sinus", medicine: "Amoxicillin-Clavulanate", details: "625mg thrice daily.", precautions: "Complete course.", sideEffects: "Diarrhea." },
+        { disease: "sprain", medicine: "Diclofenac gel", details: "Apply to affected area.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "stomach ache", medicine: "Dicyclomine", details: "10mg thrice daily.", precautions: "Avoid in glaucoma.", sideEffects: "Dry mouth." },
+        { disease: "tonsillitis", medicine: "Amoxicillin", details: "500mg thrice daily for 7 days.", precautions: "Complete course.", sideEffects: "Rash." },
+        { disease: "typhoid", medicine: "Cefixime", details: "200mg twice daily for 10 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "ulcer", medicine: "Sucralfate", details: "1g before meals.", precautions: "Take on empty stomach.", sideEffects: "Constipation." },
+        { disease: "urinary tract infection", medicine: "Nitrofurantoin", details: "100mg twice daily for 5 days.", precautions: "Complete course.", sideEffects: "Nausea." },
+        { disease: "varicose veins", medicine: "Daflon", details: "500mg twice daily.", precautions: "Consult doctor.", sideEffects: "GI upset." },
+        { disease: "warts", medicine: "Salicylic acid", details: "Apply to wart.", precautions: "External use only.", sideEffects: "Irritation." },
+        { disease: "whooping cough", medicine: "Azithromycin", details: "500mg once daily for 5 days.", precautions: "Complete course.", sideEffects: "GI upset." },
+        { disease: "worm infestation", medicine: "Albendazole", details: "400mg single dose.", precautions: "Repeat after 2 weeks.", sideEffects: "Nausea." },
+        { disease: "yawning", medicine: "No medicine needed", details: "Rest and hydration.", precautions: "Consult doctor if excessive.", sideEffects: "None." }
+    ];
+
+    // Suggest diseases as user types for allopathy
+    document.getElementById('allopathySearch').addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        const suggestDivId = 'allopathySuggestList';
+        let suggestDiv = document.getElementById(suggestDivId);
+        if (!suggestDiv) {
+            suggestDiv = document.createElement('div');
+            suggestDiv.id = suggestDivId;
+            suggestDiv.style = "background:#e6f9ed;border:1px solid #e6e6e6;border-radius:8px;max-width:300px;margin:0 auto 8px auto;text-align:left;position:relative;z-index:10;";
+            this.parentNode.appendChild(suggestDiv);
+        }
+        if (!query) {
+            suggestDiv.innerHTML = '';
+            return;
+        }
+        // Find matching diseases
+        const matches = allopathyData
+            .filter(item => item.disease.startsWith(query))
+            .slice(0, 8); // show up to 8 suggestions
+        if (matches.length === 0) {
+            suggestDiv.innerHTML = '';
+            return;
+        }
+        suggestDiv.innerHTML = matches.map(item =>
+            `<div style="padding:6px 10px;cursor:pointer;" onclick="document.getElementById('allopathySearch').value='${item.disease}';document.getElementById('allopathySuggestList').innerHTML='';toggleAllopathyEnter();">${item.disease.charAt(0).toUpperCase() + item.disease.slice(1)}</div>`
+        ).join('');
+    });
+
+    function searchAllopathy() {
+        const query = document.getElementById('allopathySearch').value.trim().toLowerCase();
+        const results = allopathyData.filter(item => item.disease.includes(query));
+        const container = document.getElementById('allopathyResults');
+        const note = document.getElementById('allopathyNote');
+        if (!query) { container.innerHTML = ""; note.innerHTML = ""; return; }
+        if (results.length === 0) {
+            container.innerHTML = "<p>No allopathy medicine found.</p>";
+            note.innerHTML = "";
+            return;
+        }
+        container.innerHTML = results.map(item => `
+            <div style="background:#e6f9ed;padding:15px;border-radius:12px;margin:10px 0;">
+                <strong style="font-size:1.2em;">${item.disease.charAt(0).toUpperCase() + item.disease.slice(1)}</strong><br>
+                <b>Medicine:</b> ${item.medicine}<br>
+                <b>Details:</b> ${item.details}<br>
+                <b>Precautions:</b> ${item.precautions}<br>
+                <b>Side Effects:</b> ${item.sideEffects}
+            </div>
+        `).join('');
+        note.innerHTML = "<b style='color:#e67e22;'>Note:</b> <b>These medicines are for general information. Please consult a doctor before taking any medicine. Stay happy and healthy!</b>";
+    }
+
+    // BMI Calculator with advice
+    function calculateBMI() {
+        const w = parseFloat(document.getElementById('bmiWeight').value);
+        const h = parseFloat(document.getElementById('bmiHeight').value) / 100;
+        const res = document.getElementById('bmiResult');
+        const advice = document.getElementById('bmiAdvice');
+        if (!w || !h) {
+            res.innerHTML = "<span style='color:red;'>Please enter weight and height.</span>";
+            advice.innerHTML = "";
+            return;
+        }
+        const bmi = (w / (h * h)).toFixed(2);
+        let msg = "", adv = "";
+        if (bmi < 18.5) {
+            msg = "Underweight";
+            adv = `<b>If you are underweight:</b><br>
+                - Eat more frequent meals.<br>
+                - Include healthy fats (nuts, seeds, avocados).<br>
+                - Add protein-rich foods (dairy, eggs, pulses).<br>
+                - Consult a nutritionist for a personalized plan.`;
+        }
+        else if (bmi < 25) {
+            msg = "Normal weight";
+            adv = `<b>If you are normal weight:</b><br>
+                - Maintain a balanced diet.<br>
+                - Stay active and exercise regularly.<br>
+                - Keep up the good work!`;
+        }
+        else if (bmi < 30) {
+            msg = "Overweight";
+            adv = `<b>If you are overweight:</b><br>
+                - Limit sugary and fried foods.<br>
+                - Increase fruits, veggies, and whole grains.<br>
+                - Exercise at least 30 minutes daily.<br>
+                - Consult a doctor or dietitian for guidance.`;
+        }
+        else {
+            msg = "Obese";
+            adv = `<b>If you are obese:</b><br>
+                - Avoid junk food and sugary drinks.<br>
+                - Eat more fiber-rich foods.<br>
+                - Start gentle physical activity.<br>
+                - Seek medical advice for a safe weight loss plan.`;
+        }
+        res.innerHTML = `<b>Your BMI:</b> ${bmi} <br><b>Status:</b> ${msg}`;
+        advice.innerHTML = adv;
+    }
+
+    // Center the BMI input box on all screen sizes
+    window.addEventListener('DOMContentLoaded', function() {
+        var bmiBox = document.querySelector('#bmiSection > div');
+        if (bmiBox) {
+            bmiBox.style.margin = "20px auto 20px auto";
+            bmiBox.style.display = "block";
+            bmiBox.style.float = "none";
+        }
+    });
+</script>
+
+  <!-- BOTTOM NAV (Always Visible) -->
+ <nav>
+  <ul>
+    <li><a href="about.html">About Us</a></li>
+    <li><a href="services.html">Our Services</a></li>
+    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+</nav>
+
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function handleLogin() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      if (!email || !password) {
+        alert("Please fill in all fields.");
+        return false;
+      }
+
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userName", email.split("@")[0]);
+      showProfile(email.split("@")[0]);
+      showSection('mainSection');
+      return false;
+    }
+
+    function handleSignup() {
+      const email = document.getElementById("signupEmail").value;
+      const name = document.getElementById("signupName").value;
+      const age = document.getElementById("signupAge").value;
+      const occ = document.getElementById("signupOcc").value;
+
+      if (!email || !name || !age || !occ) {
+        alert("Please complete all fields.");
+        return false;
+      }
+
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userAge", age);
+      localStorage.setItem("userOcc", occ);
+
+      showProfile(name);
+      showSection('mainSection');
+      return false;
+    }
+
+    function showProfile(name) {
+      document.getElementById("profileInfo").style.display = "flex";
+      document.getElementById("profileCircle").textContent = name[0].toUpperCase();
+    }
+    // Translation data for all visible text
+    const translations = {
+      en: {
+        "login-heading": "Login",
+        "signup-heading": "Create Your Profile",
+        "main-subtitle": "Your Health, Our Priority",
+        "startSection-h2": "Welcome to JeevaWell",
+        "loginEmail": "Email",
+        "loginPassword": "Password",
+        "login-btn": "Login",
+        "signupEmail": "Email",
+        "signupPassword": "Password",
+        "signupName": "Full Name",
+        "signupAge": "Age",
+        "signupGender": "Select Gender",
+        "signupOcc": "Occupation",
+        "signup-btn": "Sign Up",
+        "main-ayurveda": "Ayurveda",
+        "main-allopathy": "Allopathy",
+        "sub-yoga": "Yoga",
+        "sub-bmi": "BMI",
+        "sub-diet": "Diet",
+        "ayurvedaSection-h2": "Ayurvedic Remedies",
+        "ayurvedaSearch": "Enter your disease (e.g. cough)",
+        "ayurvedaEnterBtn": "Enter",
+        "ayurveda-back": "Back",
+        "allopathySection-h2": "Allopathy Medicines",
+        "allopathySearch": "Enter your disease (e.g. fever)",
+        "allopathyEnterBtn": "Enter",
+        "allopathy-back": "Back",
+        "bmiSection-h2": "BMI Calculator",
+        "bmiWeight": "Weight (kg)",
+        "bmiHeight": "Height (cm)",
+        "bmi-btn": "Calculate BMI",
+        "bmi-back": "Back",
+        "dietSection-h2": "Healthy Diets",
+        "diet-back": "Back",
+        "yogaSection-h2": "Yoga Poses & Benefits",
+        "yoga-back": "Back"
+      },
+      hi: {
+        "login-heading": "लॉगिन",
+        "signup-heading": "अपनी प्रोफ़ाइल बनाएं",
+        "main-subtitle": "आपका स्वास्थ्य, हमारी प्राथमिकता",
+        "startSection-h2": "JeevaWell में आपका स्वागत है",
+        "loginEmail": "ईमेल",
+        "loginPassword": "पासवर्ड",
+        "login-btn": "लॉगिन",
+        "signupEmail": "ईमेल",
+        "signupPassword": "पासवर्ड",
+        "signupName": "पूरा नाम",
+        "signupAge": "आयु",
+        "signupGender": "लिंग चुनें",
+        "signupOcc": "पेशा",
+        "signup-btn": "साइन अप",
+        "main-ayurveda": "आयुर्वेद",
+        "main-allopathy": "एलोपैथी",
+        "sub-yoga": "योग",
+        "sub-bmi": "बीएमआई",
+        "sub-diet": "आहार",
+        "ayurvedaSection-h2": "आयुर्वेदिक उपचार",
+        "ayurvedaSearch": "अपनी बीमारी दर्ज करें (जैसे खांसी)",
+        "ayurvedaEnterBtn": "एंटर",
+        "ayurveda-back": "वापस",
+        "allopathySection-h2": "एलोपैथी दवाएं",
+        "allopathySearch": "अपनी बीमारी दर्ज करें (जैसे बुखार)",
+        "allopathyEnterBtn": "एंटर",
+        "allopathy-back": "वापस",
+        "bmiSection-h2": "बीएमआई कैलकुलेटर",
+        "bmiWeight": "वजन (किग्रा)",
+        "bmiHeight": "ऊंचाई (सेमी)",
+        "bmi-btn": "बीएमआई निकालें",
+        "bmi-back": "वापस",
+        "dietSection-h2": "स्वस्थ आहार",
+        "diet-back": "वापस",
+        "yogaSection-h2": "योग आसन और लाभ",
+        "yoga-back": "वापस"
+      },
+      mr: {
+        "login-heading": "लॉगिन",
+        "signup-heading": "तुमची प्रोफाइल तयार करा",
+        "main-subtitle": "तुमचे आरोग्य, आमचे प्राधान्य",
+        "startSection-h2": "JeevaWell मध्ये आपले स्वागत आहे",
+        "loginEmail": "ईमेल",
+        "loginPassword": "पासवर्ड",
+        "login-btn": "लॉगिन",
+        "signupEmail": "ईमेल",
+        "signupPassword": "पासवर्ड",
+        "signupName": "पूर्ण नाव",
+        "signupAge": "वय",
+        "signupGender": "लिंग निवडा",
+        "signupOcc": "व्यवसाय",
+        "signup-btn": "साइन अप",
+        "main-ayurveda": "आयुर्वेद",
+        "main-allopathy": "अ‍ॅलोपथी",
+        "sub-yoga": "योग",
+        "sub-bmi": "बीएमआय",
+        "sub-diet": "आहार",
+        "ayurvedaSection-h2": "आयुर्वेदिक उपचार",
+        "ayurvedaSearch": "तुमचा आजार टाका (उदा. खोकला)",
+        "ayurvedaEnterBtn": "एंटर",
+        "ayurveda-back": "परत",
+        "allopathySection-h2": "अ‍ॅलोपथी औषधे",
+        "allopathySearch": "तुमचा आजार टाका (उदा. ताप)",
+        "allopathyEnterBtn": "एंटर",
+        "allopathy-back": "परत",
+        "bmiSection-h2": "बीएमआय कॅल्क्युलेटर",
+        "bmiWeight": "वजन (किलो)",
+        "bmiHeight": "उंची (सेमी)",
+        "bmi-btn": "बीएमआय काढा",
+        "bmi-back": "परत",
+        "dietSection-h2": "आरोग्यदायी आहार",
+        "diet-back": "परत",
+        "yogaSection-h2": "योग आसने व फायदे",
+        "yoga-back": "परत"
+      }
+    };
+
+    // --- Fix: Overwrite setLanguage to update all text/placeholder dynamically ---
+    function setLanguage(lang) {
+      const dict = translations[lang];
+      // IDs and their type (input/placeholder or text)
+      const idList = [
+        "login-heading", "signup-heading", "main-subtitle",
+        "loginEmail", "loginPassword", "login-btn",
+        "signupEmail", "signupPassword", "signupName", "signupAge", "signupGender", "signupOcc", "signup-btn",
+        "ayurvedaSearch", "ayurvedaEnterBtn", "ayurveda-back",
+        "allopathySearch", "allopathyEnterBtn", "allopathy-back",
+        "bmiWeight", "bmiHeight", "bmi-btn", "bmi-back",
+        "diet-back", "yoga-back"
+      ];
+      idList.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+          el.placeholder = dict[id] || el.placeholder;
+          if (el.tagName === "SELECT" && dict[id]) {
+            el.options[0].text = dict[id];
+          }
+        } else {
+          el.textContent = dict[id] || el.textContent;
+        }
+      });
+      // Section headings and special cases
+      const startH2 = document.querySelector("#startSection h2");
+      if (startH2 && dict["startSection-h2"]) startH2.textContent = dict["startSection-h2"];
+      const ayurH2 = document.querySelector("#ayurvedaSection h2");
+      if (ayurH2 && dict["ayurvedaSection-h2"]) ayurH2.textContent = dict["ayurvedaSection-h2"];
+      const alloH2 = document.querySelector("#allopathySection h2");
+      if (alloH2 && dict["allopathySection-h2"]) alloH2.textContent = dict["allopathySection-h2"];
+      const bmiH2 = document.querySelector("#bmiSection h2");
+      if (bmiH2 && dict["bmiSection-h2"]) bmiH2.textContent = dict["bmiSection-h2"];
+      const dietH2 = document.querySelector("#dietSection h2");
+      if (dietH2 && dict["dietSection-h2"]) dietH2.textContent = dict["dietSection-h2"];
+      const yogaH2 = document.querySelector("#yogaSection h2");
+      if (yogaH2 && dict["yogaSection-h2"]) yogaH2.textContent = dict["yogaSection-h2"];
+      // Main Ayurveda/Allopathy buttons
+      const ayurBtn = document.querySelector(".main-ayurveda span");
+      if (ayurBtn && dict["main-ayurveda"]) ayurBtn.textContent = dict["main-ayurveda"];
+      const alloBtn = document.querySelector(".main-allopathy span");
+      if (alloBtn && dict["main-allopathy"]) alloBtn.textContent = dict["main-allopathy"];
+      // Sub options (if present)
+      const yogaBtn = document.querySelector(".main-yoga span");
+      if (yogaBtn && dict["sub-yoga"]) yogaBtn.textContent = dict["sub-yoga"];
+      const bmiBtn = document.querySelector(".main-bmi span");
+      if (bmiBtn && dict["sub-bmi"]) bmiBtn.textContent = dict["sub-bmi"];
+      const dietBtn = document.querySelector(".main-diet span");
+      if (dietBtn && dict["sub-diet"]) dietBtn.textContent = dict["sub-diet"];
+    }
+
+    // Helper to set text or placeholder
+    function setTextOrPlaceholder(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+        el.placeholder = value;
+        if (el.tagName === "SELECT") {
+          el.options[0].text = value;
+        }
+      } else {
+        el.textContent = value;
+      }
+    }
+
+    function setLanguage(lang) {
+      const dict = translations[lang];
+      for (let key in dict) {
+        setTextOrPlaceholder(key, dict[key]);
+      }
+      // Special: Section headings not all have IDs, so set them here if needed
+      // Example: startSection h2
+      const startH2 = document.querySelector("#startSection h2");
+      if (startH2 && dict["startSection-h2"]) startH2.textContent = dict["startSection-h2"];
+      // Main Ayurveda/Allopathy buttons
+      const ayurBtn = document.querySelector(".main-ayurveda span");
+      if (ayurBtn && dict["main-ayurveda"]) ayurBtn.textContent = dict["main-ayurveda"];
+      const alloBtn = document.querySelector(".main-allopathy span");
+      if (alloBtn && dict["main-allopathy"]) alloBtn.textContent = dict["main-allopathy"];
+      // Sub options
+      const yogaBtn = document.querySelector(".sub-yoga .sub-btn");
+      if (yogaBtn && dict["sub-yoga"]) yogaBtn.innerHTML = `<img src="https://img.icons8.com/color/48/yoga.png" alt="Yoga" class="option-img-sm"><br>${dict["sub-yoga"]}`;
+      const bmiBtn = document.querySelector(".sub-bmi .sub-btn");
+      if (bmiBtn && dict["sub-bmi"]) bmiBtn.innerHTML = `<img src="https://img.icons8.com/color/48/scale.png" alt="BMI" class="option-img-sm"><br>${dict["sub-bmi"]}`;
+      const dietBtn = document.querySelector(".sub-diet .sub-btn");
+      if (dietBtn && dict["sub-diet"]) dietBtn.innerHTML = `<img src="https://img.icons8.com/color/48/salad.png" alt="Diet" class="option-img-sm"><br>${dict["sub-diet"]}`;
+      // Ayurveda/Allopathy section headings
+      const ayurH2 = document.querySelector("#ayurvedaSection h2");
+      if (ayurH2 && dict["ayurvedaSection-h2"]) ayurH2.textContent = dict["ayurvedaSection-h2"];
+      const alloH2 = document.querySelector("#allopathySection h2");
+      if (alloH2 && dict["allopathySection-h2"]) alloH2.textContent = dict["allopathySection-h2"];
+      // BMI section heading
+      const bmiH2 = document.querySelector("#bmiSection h2");
+      if (bmiH2 && dict["bmiSection-h2"]) bmiH2.textContent = dict["bmiSection-h2"];
+      // Diet section heading
+      const dietH2 = document.querySelector("#dietSection h2");
+      if (dietH2 && dict["dietSection-h2"]) dietH2.textContent = dict["dietSection-h2"];
+      // Yoga section heading
+      const yogaH2 = document.querySelector("#yogaSection h2");
+      if (yogaH2 && dict["yogaSection-h2"]) yogaH2.textContent = dict["yogaSection-h2"];
+      // Buttons
+      const loginBtn = document.querySelector("#loginSection button[type='submit']");
+      if (loginBtn && dict["login-btn"]) loginBtn.textContent = dict["login-btn"];
+      const signupBtn = document.querySelector("#signupSection button[type='submit']");
+      if (signupBtn && dict["signup-btn"]) signupBtn.textContent = dict["signup-btn"];
+      // Ayurveda/Allopathy Enter buttons
+      const ayurEnter = document.getElementById("ayurvedaEnterBtn");
+      if (ayurEnter && dict["ayurvedaEnterBtn"]) ayurEnter.textContent = dict["ayurvedaEnterBtn"];
+      const alloEnter = document.getElementById("allopathyEnterBtn");
+      if (alloEnter && dict["allopathyEnterBtn"]) alloEnter.textContent = dict["allopathyEnterBtn"];
+      // Ayurveda/Allopathy search placeholders
+      const ayurSearch = document.getElementById("ayurvedaSearch");
+      if (ayurSearch && dict["ayurvedaSearch"]) ayurSearch.placeholder = dict["ayurvedaSearch"];
+      const alloSearch = document.getElementById("allopathySearch");
+      if (alloSearch && dict["allopathySearch"]) alloSearch.placeholder = dict["allopathySearch"];
+      // BMI input placeholders
+      const bmiWeight = document.getElementById("bmiWeight");
+      if (bmiWeight && dict["bmiWeight"]) bmiWeight.placeholder = dict["bmiWeight"];
+      const bmiHeight = document.getElementById("bmiHeight");
+      if (bmiHeight && dict["bmiHeight"]) bmiHeight.placeholder = dict["bmiHeight"];
+      // BMI button
+      const bmiBtn2 = document.querySelector("#bmiSection button");
+      if (bmiBtn2 && dict["bmi-btn"]) bmiBtn2.textContent = dict["bmi-btn"];
+      // Back buttons
+      const ayurBack = document.querySelector("#ayurvedaSection button:last-of-type");
+      if (ayurBack && dict["ayurveda-back"]) ayurBack.textContent = dict["ayurveda-back"];
+      const alloBack = document.querySelector("#allopathySection button:last-of-type");
+      if (alloBack && dict["allopathy-back"]) alloBack.textContent = dict["allopathy-back"];
+      const bmiBack = document.querySelector("#bmiSection button:last-of-type");
+      if (bmiBack && dict["bmi-back"]) bmiBack.textContent = dict["bmi-back"];
+      const dietBack = document.querySelector("#dietSection button:last-of-type");
+      if (dietBack && dict["diet-back"]) dietBack.textContent = dict["diet-back"];
+      const yogaBack = document.querySelector("#yogaSection button:last-of-type");
+      if (yogaBack && dict["yoga-back"]) yogaBack.textContent = dict["yoga-back"];
+      // Signup form placeholders
+      const signupEmail = document.getElementById("signupEmail");
+      if (signupEmail && dict["signupEmail"]) signupEmail.placeholder = dict["signupEmail"];
+      const signupPassword = document.getElementById("signupPassword");
+      if (signupPassword && dict["signupPassword"]) signupPassword.placeholder = dict["signupPassword"];
+      const signupName = document.getElementById("signupName");
+      if (signupName && dict["signupName"]) signupName.placeholder = dict["signupName"];
+      const signupAge = document.getElementById("signupAge");
+      if (signupAge && dict["signupAge"]) signupAge.placeholder = dict["signupAge"];
+      const signupGender = document.getElementById("signupGender");
+      if (signupGender && dict["signupGender"]) signupGender.options[0].text = dict["signupGender"];
+      const signupOcc = document.getElementById("signupOcc");
+      if (signupOcc && dict["signupOcc"]) signupOcc.placeholder = dict["signupOcc"];
+      // Login form placeholders
+      const loginEmail = document.getElementById("loginEmail");
+      if (loginEmail && dict["loginEmail"]) loginEmail.placeholder = dict["loginEmail"];
+      const loginPassword = document.getElementById("loginPassword");
+      if (loginPassword && dict["loginPassword"]) loginPassword.placeholder = dict["loginPassword"];
+    }
+
+    function setLanguage(lang) {
+      for (let key in translations[lang]) {
+        document.getElementById(key).textContent = translations[lang][key];
+      }
+    }
+  </script>
+
+</body>
+</html>
